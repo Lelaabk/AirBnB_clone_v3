@@ -20,7 +20,7 @@ def get_users():
 def get_user(user_id):
     """ Retrieves a User object. """
     user = storage.get(User, user_id)
-    if ser:
+    if user:
         return jsonify(user.to_dict())
     else:
         abort(404)
@@ -29,7 +29,7 @@ def get_user(user_id):
 @app_views.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     """ Deletes a User object. """
-    ser = storage.get(User, user_id)
+    user = storage.get(User, user_id)
     if user:
         storage.delete(user)
         storage.save()
@@ -67,7 +67,7 @@ def update_user(user_id):
 
         for key, value in data.items():
             if key not in ('id', 'email', 'created_at', 'updated_at'):
-                setattr(amenity, key, value)
+                setattr(user, key, value)
 
         user.save()
         return jsonify(user.to_dict()), 200

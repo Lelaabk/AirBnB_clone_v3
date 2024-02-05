@@ -3,10 +3,8 @@
 
 from flask import abort, jsonify, request
 from api.v1.views import app_views
-from models.amenity import Amenity
 from models.city import City
 from models.place import Place
-from models.state import State
 from models.user import User
 from models import storage
 
@@ -14,12 +12,13 @@ from models import storage
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
                  strict_slashes=False)
 def get_places_by_city(city_id):
-    """ Retrieves the list of all Place objects """
+    """ Retrieves the list of all Place objects of city"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
-
-    return jsonify([place.to_dict() for place in city.places])
+    places = storage.all(Place).values()
+    return jsonify([place.to_dict() for place in places
+                    if place.city_id == city_id])
 
 
 @app_views.route('/places/<place_id>', methods=['GET'],
@@ -33,7 +32,8 @@ def get_place(place_id):
         abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['DELETE'])
+@app_views.route('/places/<place_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_place(place_id):
     """ Deletes a Place object. """
     place = storage.get(Place, place_id)
@@ -60,12 +60,12 @@ def create_place(city_id):
     if 'user_id' not in data:
         abort(400, 'Missing user_id')
 
-    if 'name' not in data:
-        abort(400, 'Missing name')
-
     user = storage.get(User, data['user_id'])
     if user is None:
         abort(404)
+
+    if 'name' not in data:
+        abort(400, 'Missing name')
 
     # Here assign city_id to JSON data
     data['city_id'] = city_id

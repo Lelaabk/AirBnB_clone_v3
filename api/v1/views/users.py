@@ -47,8 +47,10 @@ def create_user():
     if data is None:
         abort(400, 'Not a JSON')
 
-    if 'name' not in data:
-        abort(400, 'Missing name')
+    if 'email' not in data:
+        abort(400, 'Missing email')
+    if 'password' not in data:
+        abort(400, 'Missing password')
 
     user = User(**data)
     user.save()

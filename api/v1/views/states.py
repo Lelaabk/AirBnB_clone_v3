@@ -10,8 +10,7 @@ from models.state import State
 def get_states():
     """ Retrieves list of all State objcts """
     states = storage.all(State).values()
-    list_state = [state.to_dict() for state in states]
-    return jsonify(list_state)
+    return jsonify([state.to_dict() for state in states])
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
@@ -30,10 +29,9 @@ def delete_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    else:
-        state.delete(state)
-        storage.save()
-        return jsonify({}), 200
+    state.delete(state)
+    storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
@@ -56,11 +54,10 @@ def update_state(state_id):
     if state is None:
         abort(404)
     data = request.get_json()
-    keys_ignored = ['id', 'created_at', 'updated_at']
     if not data:
         abort(400, description="Not a JSON")
     for key, value in data.items():
-        if key not in keys_ignored:
+        if key not in ['id', 'created_at', 'updated_at']:
             setattr(state, key, value)
     state.save()
     return jsonify(state.to_dict()), 200

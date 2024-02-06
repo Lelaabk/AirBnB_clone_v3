@@ -7,6 +7,7 @@ from models import storage
 from models.place import Place
 from models.amenity import Amenity
 from flasgger.utils import swag_from
+import json
 
 
 @app_views.route('/places/<place_id>/amenities', methods=['GET'],

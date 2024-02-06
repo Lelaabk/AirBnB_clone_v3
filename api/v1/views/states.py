@@ -28,7 +28,7 @@ def delete_state(state_id):
     """ Deletes State obj by ID """
     state = storage.get(State, state_id)
     if state:
-        state.delete(state)
+        storage.delete(state)
         storage.save()
         return jsonify({}), 200
     else:

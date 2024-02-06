@@ -53,11 +53,7 @@ class DBStorage:
 
     def new(self, obj):
         """add the object to the current database session"""
-        if obj:
-            if 'password' in obj.__dict__:
-                obj.password = hashlib.md5(obj.password.encode()).hexdigest()
-            self.__session.add(obj)
-            self.save()
+        self.__session.add(obj)
 
     def save(self):
         """commit all changes of the current database session"""

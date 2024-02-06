@@ -53,7 +53,7 @@ def create_place(city_id):
     data = request.get_json()
     city = storage.get(City, city_id)
     if city is None:
-        abort(400)
+        abort(404)
 
     if data is None:
         abort(400, 'Not a JSON')

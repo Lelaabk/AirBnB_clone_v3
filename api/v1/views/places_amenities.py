@@ -2,7 +2,7 @@
 """ docs"""
 from os import environ
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request, make_response
+from flask import abort, jsonify, make_response, request
 from models import storage
 from models.place import Place
 from models.amenity import Amenity
@@ -13,7 +13,7 @@ from flasgger.utils import swag_from
                  strict_slashes=False)
 @swag_from('documentation/place_amenity/get_places_amenities.yml',
            methods=['GET'])
-def get_amenities(place_id):
+def get_place_amenities(place_id):
     """ retrieve place amenities based on place_id """
     place = storage.get(Place, place_id)
     if place is None:
@@ -30,13 +30,12 @@ def get_amenities(place_id):
                  strict_slashes=False, methods=['DELETE'])
 @swag_from('documentation/place_amenity/delete_place_amenities.yml',
            methods=['DELETE'])
-def delete_amenity(place_id, amenity_id):
+def delete_place_amenity(place_id, amenity_id):
     """ delete amenity from place """
     place = storage.get(Place, place_id)
-    if place is None:
-        abort(404)
     amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
+
+    if place is None or amenity is None:
         abort(404)
     if environ.get('HBNB_TYPE_STORAGE') == "db":
         if amenity not in place.amenities:
@@ -47,22 +46,19 @@ def delete_amenity(place_id, amenity_id):
             abort(404)
         place.amenity_ids.remove(amenity_id)
     storage.save()
-    return jsonify({}), 200
+    return make_response(jsonify({}), 200)
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  strict_slashes=False, methods=['POST'])
 @swag_from('documentation/place_amenity/post_place_amenities.yml',
            methods=['POST'])
-def create_amenity(place_id, amenity_id):
+def post_place_amenity(place_id, amenity_id):
     """ link amenity object to place """
     place = storage.get(Place, place_id)
-
-    if place is None:
-        abort(404)
     amenity = storage.get(Amenity, amenity_id)
 
-    if amenity is None:
+    if place is None or amenity is None:
         abort(404)
 
     if environ.get('HBNB_TYPE_STORAGE') == "db":

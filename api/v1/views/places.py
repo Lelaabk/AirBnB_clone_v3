@@ -100,8 +100,8 @@ def update_place(place_id):
 def places_search():
     """ Retrieves Place object based on provided JSON search critea """
     data = request.get_json()
-    if data is None:
-        abort(400, 'Not a JSON')
+    if not data or type(data) is not dict:
+        abort(400, description='Not a JSON')
 
     if data and len(data):
         states = data.get('states', None)

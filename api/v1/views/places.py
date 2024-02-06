@@ -108,8 +108,8 @@ def places_search():
         cities = data.get('cities', None)
         amenities = data.get('amenities', None)
 
-    if data is None or len(data) is None or (states is None and cities is None
-                                             and amenities is None):
+    if data is None or len(data) is None or (states is None and cities
+                                             is None and amenities is None):
         places = storage.all(Place).values()
         list_places = []
         for place in places:
